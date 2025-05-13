@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: advanced-calculator-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: advanced-calculator
+  template:
+    metadata:
+      labels:
+        app: advanced-calculator
+    spec:
+      containers:
+        - name: node-app
+          image: pasandocker123/advanced-calculator
+          ports:
+            - containerPort: 4000
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-uri
+                  value:mongodb://mongo:27017/sit323db
+
+          
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: advanced-calculator-service
+spec:
+  selector:
+    app: advanced-calculator
+  ports:
+    
+      port: 80
+      targetPort: 4000
+  type: LoadBalancer
